@@ -11,5 +11,5 @@ curl -X POST https://your-navidrome.example/api/upload \
   -F "folder=Artist/Album"
 ```
 
-Container images are published at `ghcr.io/filipton/navidrome`. See [FORK.md](../FORK.md) for fork maintenance and
+Container images are published at `ghcr.io/norifm/navidrome`. See [FORK.md](../FORK.md) for fork maintenance and
 the [upstream README](../README.md) for Navidrome documentation.
