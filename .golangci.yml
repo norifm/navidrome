@@ -14,21 +14,26 @@ linters:
     - depguard
     - dogsled
     - durationcheck
+    - errchkjson
     - errorlint
+    - exhaustive
     - forbidigo
+    - ginkgolinter
     - gocritic
     - gocyclo
     - goprintffuncname
     - gosec
     - misspell
+    - modernize
     - nakedret
     - nilerr
     - nolintlint
     - rowserrcheck
-    - unconvert
-    - whitespace
-  disable:
     - staticcheck
+    - thelper
+    - unconvert
+    - usetesting
+    - whitespace
   settings:
     depguard:
       rules:
@@ -123,6 +128,14 @@ linters:
     errcheck:
       exclude-functions:
         - (*github.com/zeebo/xxh3.Hasher).Write
+    errchkjson:
+      report-no-exported: true
+    ginkgolinter:
+      forbid-focus-container: true
+      force-expect-to: true
+      force-succeed: true
+      force-tonot: true
+      validate-async-intervals: true
     gocritic:
       disable-all: true
       enabled-checks:
@@ -133,6 +146,9 @@ linters:
         - G401
         - G505
         - G115
+    exhaustive:
+      # third-party enums: listing every value only adds noise; our own enums must be listed in full
+      ignore-enum-types: ^(reflect\.Kind|go\.senan\.xyz/taglib\.FileFormat)$
     forbidigo:
       forbid:
         - pattern: 'tx\.Exec$'
@@ -151,6 +167,19 @@ linters:
     govet:
       enable:
         - nilness
+    staticcheck:
+      dot-import-whitelist:
+        - github.com/Masterminds/squirrel
+    thelper:
+      # Helper() is what fixes failure line numbers; the t/tb/b/f parameter name does not
+      test:
+        name: false
+      benchmark:
+        name: false
+      tb:
+        name: false
+      fuzz:
+        name: false
   exclusions:
     rules:
       - linters:
@@ -169,6 +198,11 @@ linters:
         linters:
           - forbidigo
         text: "in tests use"
+      # the host must keep reading and writing these deprecated fields for older plugins
+      - path: ^plugins/
+        linters:
+          - staticcheck
+        text: 'SA1019: \(github\.com/navidrome/navidrome/plugins/types\.SongRef\)\.(Artist|ArtistMBID|Duration) is deprecated'
     generated: lax
     presets:
       - comments

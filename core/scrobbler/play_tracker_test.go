@@ -384,7 +384,7 @@ var _ = Describe("PlayTracker", func() {
 				Expect(err).ToNot(HaveOccurred())
 				mockDS := ds.(*tests.MockDataStore)
 				mockScrobble := mockDS.Scrobble().(*tests.MockScrobbleRepo)
-				Expect(mockScrobble.RecordedScrobbles).To(HaveLen(0))
+				Expect(mockScrobble.RecordedScrobbles).To(BeEmpty())
 			})
 		})
 	})
@@ -1563,9 +1563,9 @@ func (f *fakeScrobbler) PlaybackReport(ctx context.Context, info PlaybackSession
 }
 
 func _p(id, name string, sortName ...string) model.Participant {
-	p := model.Participant{Artist: model.Artist{ID: id, Name: name}}
+	p := model.Participant{ID: id, Name: name}
 	if len(sortName) > 0 {
-		p.Artist.SortArtistName = sortName[0]
+		p.SortArtistName = sortName[0]
 	}
 	return p
 }

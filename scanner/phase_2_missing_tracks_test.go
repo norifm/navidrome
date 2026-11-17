@@ -95,7 +95,7 @@ var _ = Describe("phaseMissingTracks", func() {
 				}
 				Expect(pidB).ToNot(BeNil())
 				Expect(pidB.missing).To(HaveLen(1))
-				Expect(pidB.matched).To(HaveLen(0))
+				Expect(pidB.matched).To(BeEmpty())
 			})
 			It("should call put for any missing tracks even without matches", func() {
 				mr.SetData(model.MediaFiles{
@@ -110,18 +110,19 @@ var _ = Describe("phaseMissingTracks", func() {
 				// Both PID A and PID B should be produced even without matches
 				var pidA, pidB *missingTracks
 				for _, p := range produced {
-					if p.pid == "A" {
+					switch p.pid {
+					case "A":
 						pidA = p
-					} else if p.pid == "B" {
+					case "B":
 						pidB = p
 					}
 				}
 				Expect(pidA).ToNot(BeNil())
 				Expect(pidA.missing).To(HaveLen(1))
-				Expect(pidA.matched).To(HaveLen(0))
+				Expect(pidA.matched).To(BeEmpty())
 				Expect(pidB).ToNot(BeNil())
 				Expect(pidB.missing).To(HaveLen(1))
-				Expect(pidB.matched).To(HaveLen(0))
+				Expect(pidB.matched).To(BeEmpty())
 			})
 		})
 	})
@@ -381,7 +382,7 @@ var _ = Describe("phaseMissingTracks", func() {
 	Describe("finalize", func() {
 		It("should return nil if no error", func() {
 			err := phase.finalize(nil)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(state.changesDetected.Load()).To(BeFalse())
 		})
 
@@ -400,7 +401,7 @@ var _ = Describe("phaseMissingTracks", func() {
 			It("should purge missing files", func() {
 				Expect(state.changesDetected.Load()).To(BeFalse())
 				err := phase.finalize(nil)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(state.changesDetected.Load()).To(BeTrue())
 			})
 		})
@@ -414,14 +415,14 @@ var _ = Describe("phaseMissingTracks", func() {
 			It("should not purge missing files if not a full scan", func() {
 				state.fullScan = false
 				err := phase.finalize(nil)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(state.changesDetected.Load()).To(BeFalse())
 			})
 			It("should purge missing files if full scan", func() {
 				Expect(state.changesDetected.Load()).To(BeFalse())
 				state.fullScan = true
 				err := phase.finalize(nil)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(state.changesDetected.Load()).To(BeTrue())
 			})
 		})
@@ -434,7 +435,7 @@ var _ = Describe("phaseMissingTracks", func() {
 			})
 			It("should not purge missing files", func() {
 				err := phase.finalize(nil)
-				Expect(err).To(BeNil())
+				Expect(err).ToNot(HaveOccurred())
 				Expect(state.changesDetected.Load()).To(BeFalse())
 			})
 		})
@@ -977,11 +978,9 @@ var _ = Describe("phaseMissingTracks", func() {
 				AlbumID:   oldAlbumID,
 				LibraryID: 1,
 				Missing:   true,
-				Annotations: model.Annotations{
-					PlayCount: 5,
-					Rating:    4,
-					Starred:   true,
-				},
+				PlayCount: 5,
+				Rating:    4,
+				Starred:   true,
 			}
 
 			matchedTrack = model.MediaFile{
@@ -991,11 +990,9 @@ var _ = Describe("phaseMissingTracks", func() {
 				AlbumID:   newAlbumID,
 				LibraryID: 2, // Different library
 				Missing:   false,
-				Annotations: model.Annotations{
-					PlayCount: 2,
-					Rating:    3,
-					Starred:   false,
-				},
+				PlayCount: 2,
+				Rating:    3,
+				Starred:   false,
 			}
 
 			// Store both tracks in the database
