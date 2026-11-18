@@ -293,7 +293,7 @@ func parseProbeOutput(data []byte) (*AudioProbeResult, error) {
 		return result, nil
 	}
 
-	return nil, fmt.Errorf("no audio stream found in ffprobe output")
+	return nil, errors.New("no audio stream found in ffprobe output")
 }
 
 func (e *ffmpeg) CmdPath() (string, error) {
@@ -552,7 +552,7 @@ func bitDepthToSampleFmt(bitDepth int) string {
 	}
 }
 
-// Path will always be an absolute path
+// createFFmpegCommand expects path to always be an absolute path
 func createFFmpegCommand(cmd, path string, maxBitRate, offset int) []string {
 	var args []string
 	for _, s := range fixCmd(cmd) {
